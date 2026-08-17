@@ -56,4 +56,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: echo "Phase B: 文档链接/需求追溯检查"
+      - run: 'echo "Phase B: 文档链接/需求追溯检查"'
