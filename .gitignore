@@ -1,0 +1,1 @@
+# Build artifacts\nbuild/\ndist/\n*.o\n*.obj\n*.elf\n*.hex\n*.bin\n\n# IDE / Editor\n.vscode/\n.idea/\n*.swp\n*.swo\n\n# OS\n.DS_Store\nThumbs.db\n\n# Logs\ntmp/\n*.log\n
