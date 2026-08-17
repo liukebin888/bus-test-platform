@@ -25,7 +25,7 @@ target_compile_features(bt_shared INTERFACE cxx_std_17)
 # ---------------------------------------------------------------------------
 # L0 core: object model (BusFrame helpers, Channel, Signal, Node, Workspace)
 # ---------------------------------------------------------------------------
-add_library(bt_core STATIC
+add_library(bt_core OBJECT
     src/core/bus_frame.cpp
     src/core/channel.cpp
     src/core/signal.cpp
@@ -38,7 +38,7 @@ target_include_directories(bt_core PUBLIC src)
 # ---------------------------------------------------------------------------
 # L3 protocol stack: CAN decode, DBC parser, USB frame codec
 # ---------------------------------------------------------------------------
-add_library(bt_protocol STATIC
+add_library(bt_protocol OBJECT
     src/protocol/can/can_decoder.cpp
     src/protocol/dbc/dbc_parser.cpp
     src/protocol/usb/usb_frame_codec.cpp
@@ -46,34 +46,44 @@ add_library(bt_protocol STATIC
 target_link_libraries(bt_protocol PUBLIC bt_core)
 
 # ---------------------------------------------------------------------------
-# L2 data: zero-copy ring pipeline
+# L2 data: zero-copy ring pipeline + capture service (producer thread)
 # ---------------------------------------------------------------------------
-add_library(bt_data STATIC
+add_library(bt_data OBJECT
     src/data/pipeline.cpp
+    src/data/capture_service.cpp
 )
-target_link_libraries(bt_data PUBLIC bt_core)
+target_link_libraries(bt_data PUBLIC bt_core bt_hal)
 
 # ---------------------------------------------------------------------------
 # L4 engines: RBS scheduler (+ interface-only script host / test runner / diag)
 # ---------------------------------------------------------------------------
-add_library(bt_engine STATIC
+add_library(bt_engine OBJECT
     src/engine/rbs/rbs_scheduler.cpp
 )
 target_link_libraries(bt_engine PUBLIC bt_core bt_protocol)
 
 # ---------------------------------------------------------------------------
-# L1 HAL: USB device abstraction + null device for self-test
+# L1 HAL: USB device abstraction + null device + sim traffic generator
 # ---------------------------------------------------------------------------
-add_library(bt_hal STATIC
+add_library(bt_hal OBJECT
     src/hal/usb/usb_device_null.cpp
+    src/hal/usb/usb_device_sim.cpp
 )
 target_link_libraries(bt_hal PUBLIC bt_core)
+
+# ---------------------------------------------------------------------------
+# Benchmark harness (M1 host-side acceptance measurements)
+# ---------------------------------------------------------------------------
+add_library(bt_bench OBJECT
+    src/bench/bench.cpp
+)
+target_link_libraries(bt_bench PUBLIC bt_core bt_data bt_hal bt_protocol)
 
 # ---------------------------------------------------------------------------
 # CLI: busmon
 # ---------------------------------------------------------------------------
 add_executable(busmon src/main.cpp)
-target_link_libraries(busmon PRIVATE bt_hal bt_engine bt_data bt_protocol bt_core)
+target_link_libraries(busmon PRIVATE bt_bench bt_hal bt_engine bt_data bt_protocol bt_core)
 target_compile_definitions(busmon PRIVATE BT_PROJECT_VERSION="${PROJECT_VERSION}")
 
 # ---------------------------------------------------------------------------
@@ -88,6 +98,8 @@ if(BT_BUILD_TESTS)
         tests/unit/test_usb_codec.cpp
         tests/unit/test_rbs_scheduler.cpp
         tests/unit/test_pipeline.cpp
+        tests/unit/test_sim_device.cpp
+        tests/unit/test_capture_service.cpp
     )
     target_link_libraries(bt_unit_tests PRIVATE bt_hal bt_engine bt_data bt_protocol bt_core)
     target_include_directories(bt_unit_tests PRIVATE tests/unit)

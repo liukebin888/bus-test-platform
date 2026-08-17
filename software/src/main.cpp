@@ -1,8 +1,10 @@
 // main.cpp - busmon CLI entry point (L5 shell, no GUI dependency)
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include <string>
 
+#include "bench/bench.h"
 #include "bus/usb_protocol.h"
 #include "core/workspace.h"
 #include "hal/usb/usb_device_null.h"
@@ -60,11 +62,33 @@ int cmd_demo() {
     return 0;
 }
 
+// "--bench [--duration=S] [--rate=N]" -> parsed into these two.
+int cmd_bench(int argc, char** argv) {
+    double duration = 1.0;
+    uint32_t rate = 50000;
+    for (int i = 2; i < argc; ++i) {
+        const char* a = argv[i];
+        if (std::strncmp(a, "--duration=", 11) == 0) {
+            duration = std::atof(a + 11);
+        } else if (std::strncmp(a, "--rate=", 7) == 0) {
+            rate = static_cast<uint32_t>(std::atoi(a + 7));
+        }
+    }
+    std::printf("running bench suite: duration=%.2fs sim_rate=%u msg/s ...\n",
+                duration, rate);
+    const bt::BenchReport r = bt::run_bench_suite(duration, rate);
+    bt::print_bench_report(r);
+    return (r.pass_throughput() && r.pass_latency() &&
+            r.pass_loss_accounting()) ? 0 : 2;
+}
+
 int cmd_usage(const char* argv0) {
     const char* self = (argv0 != nullptr && argv0[0] != '\0') ? argv0 : "busmon";
-    std::printf("usage: %s [--info | --demo | --help]\n", self);
+    std::printf("usage: %s [--info | --demo | --bench [opts] | --help]\n", self);
     std::printf("  --info   device & protocol summary (default)\n");
     std::printf("  --demo   exercise the object model (channels/nodes)\n");
+    std::printf("  --bench  M1 host benchmark: [--duration=S] [--rate=N]\n");
+    std::printf("           exit 0 = all gates pass, 2 = gate failure\n");
     std::printf("  --help   this message\n");
     return 0;
 }
@@ -78,6 +102,9 @@ int main(int argc, char** argv) {
     }
     if (std::strcmp(cmd, "--demo") == 0 || std::strcmp(cmd, "-d") == 0) {
         return cmd_demo();
+    }
+    if (std::strcmp(cmd, "--bench") == 0 || std::strcmp(cmd, "-b") == 0) {
+        return cmd_bench(argc, argv);
     }
     return cmd_usage((argc > 0) ? argv[0] : nullptr);
 }

@@ -90,6 +90,9 @@ RTL 仿真：`iverilog -o tb.out src/*.v tb/tb_*.v && vvp tb.out`（或使用 CI
 - [x] 工程骨架（Monorepo 结构 + 构建系统 + CI 资产）— 2026-08-17
 - [x] PC 端骨架可编译：5 静态库 + `busmon` CLI + 21 项单元测试全绿
       （zig/clang 自举验证，Ubuntu CI 预设 `-Wall -Wextra -Wpedantic -Werror`）
+- [x] PC 端 WP-PC1~3（Phase A 首波）：SimUsbDevice 流量生成器 +
+      CaptureService 采集线程 + `busmon --bench` M1 基准工具；28 项单测全绿；
+      主机侧门禁实测：管线 2.88M msg/s、端到端 48µs、codec 6.6M msg/s — 2026-08-17
 - [ ] Phase A：硬件平台 + 固件 + 基础软件重构（W01-14）
 - [ ] Phase B：仿真引擎 + 脚本 + 协议族 + 诊断（W15-28）
 - [ ] Phase C：测试框架 + 兼容层 + 认证发布（W29-40）

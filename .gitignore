@@ -67,3 +67,6 @@ tools/.toolchain/
 # 本地一次性工具（不入仓）
 push-to-github.bat
 push-log.txt
+
+# ---- Bootstrap toolchain scratch (local-only, machine-specific) ----
+.toolcheck/
