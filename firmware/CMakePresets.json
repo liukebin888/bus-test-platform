@@ -1,0 +1,34 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": { "major": 3, "minor": 24, "patch": 0 },
+  "configurePresets": [
+    {
+      "name": "host-default",
+      "displayName": "Host protocol tests (any C11 compiler)",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build-host",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "BT_FW_TARGET_STM32": "OFF"
+      }
+    },
+    {
+      "name": "stm32-release",
+      "displayName": "STM32H750 release firmware",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build-stm32",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "BT_FW_TARGET_STM32": "ON",
+        "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/cmake/arm-none-eabi-toolchain.cmake"
+      }
+    }
+  ],
+  "buildPresets": [
+    { "name": "host-default", "configurePreset": "host-default" },
+    { "name": "stm32-release", "configurePreset": "stm32-release" }
+  ],
+  "testPresets": [
+    { "name": "host-default", "configurePreset": "host-default", "output": { "outputOnFailure": true } }
+  ]
+}

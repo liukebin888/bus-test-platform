@@ -1,0 +1,65 @@
+# ---- Build outputs ----
+build/
+build-*/
+out/
+dist/
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.dylib
+*.dll
+*.exe
+*.elf
+*.hex
+*.bin
+
+# ---- CMake ----
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+CTestTestfile.cmake
+Testing/
+compile_commands.json
+.vscode/
+
+# ---- IDE / editors ----
+.idea/
+*.swp
+*.swo
+*~
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+
+# ---- FPGA / Vivado ----
+*.jou
+*.log
+*.wdb
+.vivado/
+.hw/
+.sdk/
+*.runs/
+*.sim/
+*.cache/
+*.gen/
+
+# ---- Hardware EDA ----
+hardware/board/schematic/*.sch.bak
+hardware/board/pcb/*.kicad_pcb-bak
+
+# ---- Logs / temp ----
+*.log
+logs/
+tmp/
+*.tmp
+
+# ---- Local toolchain scratch ----
+tools/.toolchain/

@@ -1,0 +1,15 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+  "name": "bus-test-platform",
+  "version": "0.1.0",
+  "description": "Automotive bus test platform - PC application dependencies",
+  "dependencies": [
+    "qtbase"
+  ],
+  "features": {
+    "python-dsl": {
+      "description": "Python 3.11 embedded DSL host",
+      "dependencies": ["python3"]
+    }
+  }
+}

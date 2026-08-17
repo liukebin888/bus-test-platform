@@ -1,0 +1,47 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": { "major": 3, "minor": 24, "patch": 0 },
+  "configurePresets": [
+    {
+      "name": "dev",
+      "displayName": "Developer build (no Qt)",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "BT_BUILD_TESTS": "ON",
+        "BT_ENABLE_UI": "OFF"
+      }
+    },
+    {
+      "name": "with-ui",
+      "displayName": "Developer build with Qt6 UI",
+      "inherits": "dev",
+      "binaryDir": "${sourceDir}/build-ui",
+      "cacheVariables": {
+        "BT_ENABLE_UI": "ON"
+      }
+    },
+    {
+      "name": "ci-release",
+      "displayName": "CI release build",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build-ci",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "BT_BUILD_TESTS": "ON",
+        "BT_ENABLE_UI": "OFF",
+        "CMAKE_CXX_FLAGS": "-Wall -Wextra -Wpedantic -Werror"
+      }
+    }
+  ],
+  "buildPresets": [
+    { "name": "dev", "configurePreset": "dev" },
+    { "name": "with-ui", "configurePreset": "with-ui" },
+    { "name": "ci-release", "configurePreset": "ci-release" }
+  ],
+  "testPresets": [
+    { "name": "dev", "configurePreset": "dev", "output": { "outputOnFailure": true } },
+    { "name": "ci-release", "configurePreset": "ci-release", "output": { "outputOnFailure": true } }
+  ]
+}

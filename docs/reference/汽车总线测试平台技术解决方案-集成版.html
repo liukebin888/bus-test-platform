@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>汽车总线测试平台技术解决方案（集成版 v3.0）</title>
+<style>
+  :root {
+    --bg-primary: #0d1117;
+    --bg-secondary: #161b22;
+    --bg-tertiary: #1c2333;
+    --text-primary: #e6edf3;
+    --text-secondary: #8b949e;
+    --text-tertiary: #6e7681;
+    --border: #30363d;
+    --accent-blue: #58a6ff;
+    --accent-green: #3fb950;
+    --accent-orange: #d29922;
+    --accent-red: #f85149;
+    --accent-purple: #bc8cff;
+    --accent-teal: #39d0d8;
+    --radius: 12px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.7;
+    font-size: 15px;
+  }
+  .container { max-width: 980px; margin: 0 auto; padding: 40px 32px 80px; }
+
+  /* Cover */
+  .cover {
+    text-align: center;
+    padding: 72px 32px 56px;
+    background: linear-gradient(180deg, #0d1117 0%, #161b22 100%);
+    border-bottom: 1px solid var(--border);
+  }
+  .cover .badge {
+    display: inline-block;
+    padding: 4px 14px;
+    border-radius: 20px;
+    background: rgba(88,166,255,0.12);
+    color: var(--accent-blue);
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 24px;
+    border: 1px solid rgba(88,166,255,0.3);
+  }
+  .cover h1 { font-size: 34px; font-weight: 600; margin-bottom: 14px; letter-spacing: -0.5px; }
+  .cover .subtitle { color: var(--text-secondary); font-size: 16px; max-width: 640px; margin: 0 auto; }
+  .cover .meta { margin-top: 36px; display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; }
+  .cover .meta-item { text-align: center; }
+  .cover .meta-label { font-size: 12px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 1px; }
+  .cover .meta-value { font-size: 15px; color: var(--text-primary); font-weight: 500; margin-top: 4px; }
+
+  /* TOC */
+  .toc { max-width: 980px; margin: 0 auto; padding: 36px 32px; }
+  .toc h2 { font-size: 18px; font-weight: 600; margin-bottom: 16px; color: var(--accent-blue); }
+  .toc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 24px; }
+  .toc a { color: var(--text-secondary); text-decoration: none; font-size: 14px; display: block; padding: 3px 0; }
+  .toc a:hover { color: var(--accent-blue); }
+  .toc .num { color: var(--accent-teal); font-family: ui-monospace, Consolas, monospace; margin-right: 6px; }
+
+  /* Section */
+  .section { padding: 44px 0; border-bottom: 1px solid var(--border); scroll-margin-top: 12px; }
+  .section:last-child { border-bottom: none; }
+  .section-number {
+    display: inline-block; width: 32px; height: 32px; line-height: 32px;
+    text-align: center; border-radius: 8px;
+    background: rgba(88,166,255,0.12); color: var(--accent-blue);
+    font-size: 14px; font-weight: 600; margin-right: 12px;
+  }
+  .section h2 { display: inline-block; font-size: 22px; font-weight: 600; margin-bottom: 24px; vertical-align: middle; }
+  .section h3 { font-size: 17px; font-weight: 600; margin: 28px 0 12px; color: var(--accent-blue); }
+  .section h4 { font-size: 15px; font-weight: 600; margin: 20px 0 10px; color: var(--accent-teal); }
+  .section p { margin-bottom: 12px; }
+  .section ul, .section ol { margin: 0 0 14px 22px; }
+  .section li { margin-bottom: 6px; }
+  .section code {
+    background: var(--bg-tertiary); border: 1px solid var(--border);
+    padding: 1px 7px; border-radius: 5px; font-size: 13px;
+    font-family: ui-monospace, Consolas, monospace; color: var(--accent-teal);
+  }
+
+  /* Table */
+  .table-wrap { overflow-x: auto; margin: 14px 0 20px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; min-width: 560px; }
+  th, td { padding: 9px 12px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { background: var(--bg-tertiary); color: var(--text-secondary); font-weight: 500; font-size: 13px; white-space: nowrap; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+  td code { background: var(--bg-tertiary); }
+
+  /* Tags */
+  .tag { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; white-space: nowrap; }
+  .tag-green { background: rgba(63,185,80,0.15); color: var(--accent-green); border: 1px solid rgba(63,185,80,0.35); }
+  .tag-teal { background: rgba(57,208,216,0.15); color: var(--accent-teal); border: 1px solid rgba(57,208,216,0.35); }
+  .tag-orange { background: rgba(210,153,34,0.15); color: var(--accent-orange); border: 1px solid rgba(210,153,34,0.35); }
+  .tag-red { background: rgba(248,81,73,0.15); color: var(--accent-red); border: 1px solid rgba(248,81,73,0.35); }
+  .tag-blue { background: rgba(88,166,255,0.15); color: var(--accent-blue); border: 1px solid rgba(88,166,255,0.35); }
+
+  /* Cards */
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin: 16px 0 20px; }
+  .card { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; }
+  .card-title { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 14.5px; margin-bottom: 10px; }
+  .card-icon {
+    width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700; flex-shrink: 0;
+  }
+  .card-body { font-size: 13.5px; color: var(--text-secondary); }
+  .card-body ul { margin-left: 16px; }
+  .card-body li { margin-bottom: 5px; }
+
+  /* Callout / Note */
+  .callout, .note {
+    background: var(--bg-secondary); border-left: 3px solid var(--accent-blue);
+    border-radius: 8px; padding: 14px 18px; margin: 16px 0; font-size: 14px;
+  }
+  .note { border-left-color: var(--accent-orange); }
+  .note strong { color: var(--accent-orange); }
+
+  /* Code block */
+  .code-block {
+    background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 10px;
+    padding: 16px 18px; margin: 14px 0 20px; font-size: 13px; line-height: 1.7;
+    font-family: ui-monospace, Consolas, monospace; overflow-x: auto; white-space: pre;
+  }
+  .cm { color: var(--text-tertiary); }
+  .kw { color: var(--accent-purple); font-weight: 500; }
+
+  /* Bars */
+  .bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 13px; }
+  .bar-label { width: 150px; color: var(--text-secondary); text-align: right; flex-shrink: 0; }
+  .bar-track { flex: 1; background: var(--bg-tertiary); border-radius: 6px; height: 22px; overflow: hidden; min-width: 160px; }
+  .bar-fill { height: 100%; border-radius: 6px; display: flex; align-items: center; padding: 0 10px; font-size: 12px; color: #fff; white-space: nowrap; }
+  .bar-val { width: 48px; color: var(--text-secondary); flex-shrink: 0; }
+
+  /* Timeline */
+  .timeline { margin: 16px 0 20px; padding-left: 24px; border-left: 2px solid var(--border); }
+  .timeline-item { position: relative; margin-bottom: 20px; }
+  .timeline-item::before {
+    content: ""; position: absolute; left: -31px; top: 6px; width: 12px; height: 12px;
+    border-radius: 50%; background: var(--accent-blue); border: 3px solid var(--bg-primary);
+  }
+  .timeline-dot { position: absolute; left: -31px; top: 6px; width: 12px; height: 12px; border-radius: 50%; border: 3px solid var(--bg-primary); }
+  .timeline-phase { font-weight: 600; font-size: 15px; margin-bottom: 6px; }
+  .timeline-duration {
+    display: inline-block; font-size: 12px; color: var(--accent-teal); font-weight: 400;
+    background: rgba(57,208,216,0.1); border: 1px solid rgba(57,208,216,0.3);
+    padding: 1px 10px; border-radius: 12px; margin-left: 8px;
+  }
+  .timeline-content ul { margin-left: 18px; }
+  .timeline-content li { font-size: 14px; margin-bottom: 4px; }
+  .timeline-title { font-weight: 600; font-size: 15px; color: var(--accent-blue); }
+  .timeline-desc { font-size: 13.5px; color: var(--text-secondary); margin-top: 4px; }
+
+  /* Requirement flow */
+  .flow-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin: 16px 0; }
+  .flow-step { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 10px; padding: 14px; text-align: center; position: relative; }
+  .flow-step .step-num {
+    width: 26px; height: 26px; line-height: 26px; border-radius: 50%; margin: 0 auto 8px;
+    background: rgba(88,166,255,0.15); color: var(--accent-blue); font-weight: 600; font-size: 13px;
+  }
+  .flow-step .step-title { font-size: 13.5px; font-weight: 600; margin-bottom: 4px; }
+  .flow-step .step-desc { font-size: 12px; color: var(--text-tertiary); }
+
+  .divider { height: 1px; background: var(--border); margin: 8px 0 20px; }
+
+  /* Doc index */
+  .doc-index { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+  .doc-card { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; }
+  .doc-card .doc-title { font-weight: 600; font-size: 14.5px; color: var(--accent-blue); margin-bottom: 6px; }
+  .doc-card .doc-desc { font-size: 13px; color: var(--text-secondary); }
+
+  .foot { text-align: center; color: var(--text-tertiary); font-size: 13px; padding: 32px 0 8px; }
+  @media (max-width: 720px) {
+    .toc-grid { grid-template-columns: 1fr; }
+    .bar-label { width: 110px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= COVER ================= -->
+<div class="cover">
+  <span class="badge">集成版 · Final Specification</span>
+  <h1>汽车总线测试平台技术解决方案</h1>
+  <p class="subtitle">面向 CAN / CAN FD / CAN XL / LIN 总线的监控、仿真、诊断、自动化测试与工程管理一体化平台</p>
+  <div class="meta">
+    <div class="meta-item"><div class="meta-label">版本</div><div class="meta-value">v3.0 集成版</div></div>
+    <div class="meta-item"><div class="meta-label">文档日期</div><div class="meta-value">2026-08-17</div></div>
+    <div class="meta-item"><div class="meta-label">对标基准</div><div class="meta-value">Vector CANoe 12</div></div>
+    <div class="meta-item"><div class="meta-label">综合覆盖度</div><div class="meta-value">≈ 92%</div></div>
+    <div class="meta-item"><div class="meta-label">开发周期</div><div class="meta-value">40 周</div></div>
+  </div>
+</div>
+
+<!-- ================= TOC ================= -->
+<div class="toc">
+  <h2>目录</h2>
+  <div class="toc-grid">
+    <a href="#c1"><span class="num">01</span>项目概述与需求演进</a>
+    <a href="#c2"><span class="num">02</span>需求分析（汇总）</a>
+    <a href="#c3"><span class="num">03</span>系统总体架构</a>
+    <a href="#c4"><span class="num">04</span>硬件平台设计</a>
+    <a href="#c5"><span class="num">05</span>协议支持</a>
+    <a href="#c6"><span class="num">06</span>软件平台设计</a>
+    <a href="#c7"><span class="num">07</span>测试用例管理与执行引擎</a>
+    <a href="#c8"><span class="num">08</span>测试产品与缺陷跟踪管理</a>
+    <a href="#c9"><span class="num">09</span>性能指标与竞品对标</a>
+    <a href="#c10"><span class="num">10</span>开发计划</a>
+    <a href="#c11"><span class="num">11</span>风险与对策</a>
+    <a href="#c12"><span class="num">12</span>交付物与文档索引</a>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- ================= 1. 项目概述 ================= -->
+<div class="section" id="c1">
+  <span class="section-number">1</span><h2>项目概述与需求演进</h2>
+
+  <h3>1.1 项目背景</h3>
+  <p>随着汽车电子电气架构（EEA）向域集中式演进，整车 CAN / LIN / CAN FD / CAN XL 总线网络复杂度持续攀升。研发与测试环节迫切需要一套集<b>总线监控、剩余总线仿真、诊断、自动化测试、测试与缺陷工程管理</b>于一体的测试平台，用于 ECU 开发验证、整车网络联调、协议一致性测试与量产质量管控。</p>
+  <p>本方案对标业界标杆 Vector CANoe（含 vTESTstudio、TFS、Test Report Viewer 三件套）与 Polarion / TestRail / Jira 等工程管理工具，结合自有硬件实现"硬件 + 软件 + 测试工程"一体化交付，目标是<b>以约 1/100 的成本实现 90% 以上的核心工作流覆盖</b>。</p>
+
+  <h3>1.2 目标用户</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th style="width:160px">用户角色</th><th>典型场景</th><th>核心诉求</th></tr></thead>
+      <tbody>
+        <tr><td>ECU 开发工程师</td><td>总线报文调试、信号解析、收发验证</td><td>高吞吐监控、DBC/LDF 解析、错误注入</td></tr>
+        <tr><td>网络测试工程师</td><td>剩余总线仿真、网络联调、一致性测试</td><td>RBS 仿真、CAPL 兼容脚本、自动化测试</td></tr>
+        <tr><td>诊断工程师</td><td>UDS/OBD 诊断、刷写、DTC 管理</td><td>诊断栈、Seed&Key、ODX 支持</td></tr>
+        <tr><td>测试经理 / 质量工程师</td><td>测试计划、结果统计、缺陷闭环</td><td>用例库、报告、产品与缺陷管理</td></tr>
+        <tr><td>产线 / 售后工程师</td><td>下线检测、故障复现</td><td>离线分析、日志回放、一键建单</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>1.3 需求演进历程（六轮需求 → 完整平台）</h3>
+  <p>本方案由六轮需求逐级演进而来，每一轮都在前一版基础上补齐一个能力域：</p>
+  <div class="flow-steps">
+    <div class="flow-step"><div class="step-num">R1</div><div class="step-title">基础测试工具</div><div class="step-desc">CAN/LIN 监控 · 收发 · DBC/LDF · v1.0</div></div>
+    <div class="flow-step"><div class="step-num">R2</div><div class="step-title">竞品对标</div><div class="step-desc">CANoe / PCAN-View / CanKing 差异分析</div></div>
+    <div class="flow-step"><div class="step-num">R3</div><div class="step-title">对标升级</div><div class="step-desc">FPGA+MCU · 仿真 · 脚本 · 诊断 · v2.0</div></div>
+    <div class="flow-step"><div class="step-num">R4</div><div class="step-title">测试闭环</div><div class="step-desc">用例编辑器 · 执行引擎 · 报告系统 · v2.1</div></div>
+    <div class="flow-step"><div class="step-num">R5</div><div class="step-title">产品管理</div><div class="step-desc">产品档案 · 车型矩阵 · v2.2</div></div>
+    <div class="flow-step"><div class="step-num">R6</div><div class="step-title">缺陷闭环</div><div class="step-desc">测试结果管理 · BUG 跟踪 · 一键建单</div></div>
+  </div>
+  <p>本集成版（v3.0）将上述全部需求与设计合成为一份<b>单一事实来源（Single Source of Truth）</b>技术方案，删除重复、统一术语、对齐指标。</p>
+
+  <h3>1.4 平台定位</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th style="width:140px">定位</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td><span class="tag tag-blue">对标对象</span></td><td>Vector CANoe 12 + vTESTstudio + TFS + Test Report Viewer；Polarion / TestRail / Jira（工程管理层）</td></tr>
+        <tr><td><span class="tag tag-green">差异化支柱</span></td><td>① Python DSL + CAPL 兼容脚本（免费工具空缺）② 8 通道 CAN+LIN 集成硬件 ③ 中文本地化生态 ④ 总线现场原生追溯（失败→缺陷一键建单）</td></tr>
+        <tr><td><span class="tag tag-orange">理性保留</span></td><td>FlexRay/MOST/AFDX 全总线族、HIL 硬件在环（需 VT 类板卡）、CAPL 存量工程（提供转换工具链）</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ================= 2. 需求分析 ================= -->
+<div class="section" id="c2">
+  <span class="section-number">2</span><h2>需求分析（汇总）</h2>
+
+  <h3>2.1 功能需求（八大能力域）</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th style="width:150px">能力域</th><th>关键功能</th><th>来源需求</th></tr></thead>
+      <tbody>
+        <tr><td><strong>总线监控分析</strong></td><td>报文 Trace、信号解析（DBC/LDF）、Graphics 绘图、Statistics 统计、物理层示波器、离线分析</td><td>R1 / R3</td></tr>
+        <tr><td><strong>收发与注入</strong></td><td>报文发送、周期发送、错误帧注入（位/CRC/ACK/填充/毛刺）、回环/监听模式</td><td>R1 / R3</td></tr>
+        <tr><td><strong>仿真建模</strong></td><td>剩余总线仿真（RBS）、节点行为模型、调度表、交互式生成器（IG）、回放叠加</td><td>R3</td></tr>
+        <tr><td><strong>脚本自动化</strong></td><td>Python DSL、CAPL 兼容层（事件模型/函数库）、IDE 支持、插件系统</td><td>R1 / R3</td></tr>
+        <tr><td><strong>诊断能力</strong></td><td>UDS 全服务、OBD-II、LIN 诊断、Seed&Key、刷写流程、DTC 管理、ODX 导入</td><td>R1 / R3</td></tr>
+        <tr><td><strong>测试闭环</strong></td><td>用例编辑（图形+表格）、用例库管理、Test Runner 执行引擎、断言库、报告系统</td><td>R4</td></tr>
+        <tr><td><strong>产品管理</strong></td><td>产品档案（名称/型号/车型）、车型适配矩阵、资源绑定、基线冻结</td><td>R5</td></tr>
+        <tr><td><strong>结果与缺陷</strong></td><td>测试批次/结果管理、质量指标趋势、BUG 全生命周期跟踪、一键建单、统计报表</td><td>R5 / R6</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>2.2 非功能需求（性能指标基线）</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th style="width:200px">指标</th><th>目标值</th><th>验收方式</th></tr></thead>
+      <tbody>
+        <tr><td>聚合帧吞吐</td><td>≥ 50,000 msg/s（FPGA 直通 + USB HS）</td><td>8 通道满负载压测</td></tr>
+        <tr><td>接收时间戳</td><td>100 ns（FPGA 硬件打戳）</td><td>差分信号校准</td></tr>
+        <tr><td>端到端延迟</td><td>&lt; 1 ms（总线 → 应用）</td><td>硬件注入-软件收到打点</td></tr>
+        <tr><td>发送周期抖动</td><td>&lt; 100 µs（调度器硬件辅助）</td><td>示波器统计</td></tr>
+        <tr><td>日志吞吐</td><td>≥ 100 MB/s（MMAP 异步落盘）</td><td>BLF/MF4 满速写入</td></tr>
+        <tr><td>UI 刷新率</td><td>60 fps 批量渲染（16 ms 批）</td><td>帧率监控</td></tr>
+        <tr><td>长时间稳定性</td><td>72 h 连续运行内存零增长</td><td>72h soak 测试</td></tr>
+        <tr><td>跨设备同步</td><td>&lt; 1 µs（PPS + 同步帧，4 设备级联）</td><td>同步帧偏差测量</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>2.3 需求-模块映射矩阵</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th style="width:180px">需求</th><th>硬件模块</th><th>软件模块</th><th>管理模块</th></tr></thead>
+      <tbody>
+        <tr><td>总线监控</td><td>FPGA 过滤 + 打戳</td><td>Trace / Graphics / Statistics</td><td>—</td></tr>
+        <tr><td>错误注入</td><td>FPGA 注入器</td><td>注入面板 + 脚本 API</td><td>—</td></tr>
+        <tr><td>剩余总线仿真</td><td>硬件发送调度器</td><td>RBS 引擎 + IG + 节点模型</td><td>—</td></tr>
+        <tr><td>诊断</td><td>—</td><td>UDS 栈 + ODX + Seed&Key</td><td>—</td></tr>
+        <tr><td>自动化测试</td><td>—</td><td>Test Runner + 断言库</td><td>用例库 / 报告系统</td></tr>
+        <tr><td>产品维度测试</td><td>—</td><td>—</td><td>产品中心 + 车型矩阵</td></tr>
+        <tr><td>缺陷闭环</td><td>—</td><td>一键建单插件</td><td>缺陷中心 + 结果管理</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ================= 3. 系统总体架构 ================= -->
+<div class="section" id="c3">
+  <span class="section-number">3</span><h2>系统总体架构</h2>
+
+  <h3>3.1 全景架构（硬件 + 软件 + 测试管理三域）</h3>
+  <svg viewBox="0 0 940 470" width="100%" role="img" xmlns="http://www.w3.org/2000/svg" style="margin:10px 0 20px;background:var(--bg-secondary);border:1px solid var(--border);border-radius:12px;">
+    <title>汽车总线测试平台系统全景架构</title>
+    <desc>硬件平台FPGA+MCU双核、软件平台五层架构、测试管理闭环三域</desc>
+    <text x="30" y="30" font-size="15" font-weight="600" fill="#e6edf3">系统全景架构</text>
+    <g>
+      <rect x="30" y="50" width="880" height="110" rx="14" fill="#0C447C" stroke="#58a6ff" stroke-width="0.6"/>
+      <text x="44" y="72" font-size="12" fill="#58a6ff">① 硬件平台 · FPGA + MCU 双核（对标 VN1630A 架构）</text>
+      <g>
+        <rect x="44" y="84" width="220" height="64" rx="8" fill="#1c2333" stroke="#58a6ff" stroke-width="0.5"/>
+        <text x="154" y="106" text-anchor="middle" font-size="13" font-weight="600" fill="#e6edf3">CAN×4 / LIN×2 总线接口</text>
+        <text x="154" y="128" text-anchor="middle" font-size="11" fill="#8b949e">TJA1463 · TJA1027 · 每通道隔离</text>
+      </g>
+      <g>
+        <rect x="290" y="84" width="280" height="64" rx="8" fill="#1c2333" stroke="#58a6ff" stroke-width="0.5"/>
+        <text x="430" y="106" text-anchor="middle" font-size="13" font-weight="600" fill="#e6edf3">Artix-7 FPGA 协处理器</text>
+        <text x="430" y="128" text-anchor="middle" font-size="11" fill="#8b949e">100ns 打戳 · 过滤 · 注入 · 1GS/s 采样 · PPS 同步</text>
+      </g>
+      <g>
+        <rect x="596" y="84" width="298" height="64" rx="8" fill="#1c2333" stroke="#58a6ff" stroke-width="0.5"/>
+        <text x="745" y="106" text-anchor="middle" font-size="13" font-weight="600" fill="#e6edf3">STM32H750 主控 MCU</text>
+        <text x="745" y="128" text-anchor="middle" font-size="11" fill="#8b949e">FDCAN/LIN 驱动 · USB3300 HS 480Mbps · DFU</text>
+      </g>
+    </g>
+    <g>
+      <rect x="30" y="180" width="880" height="150" rx="14" fill="#26215C" stroke="#bc8cff" stroke-width="0.6"/>
+      <text x="44" y="202" font-size="12" fill="#bc8cff">② 软件平台 · 五层架构 + 核心引擎（PC 应用，Qt6）</text>
+      <g>
+        <rect x="44" y="214" width="160" height="48" rx="8" fill="#1c2333" stroke="#bc8cff" stroke-width="0.5"/>
+        <text x="124" y="238" text-anchor="middle" font-size="12" fill="#e6edf3">L5 UI 层</text>
+      </g>
+      <g>
+        <rect x="216" y="214" width="160" height="48" rx="8" fill="#1c2333" stroke="#bc8cff" stroke-width="0.5"/>
+        <text x="296" y="238" text-anchor="middle" font-size="12" fill="#e6edf3">L4 业务逻辑层</text>
+      </g>
+      <g>
+        <rect x="388" y="214" width="160" height="48" rx="8" fill="#1c2333" stroke="#bc8cff" stroke-width="0.5"/>
+        <text x="468" y="238" text-anchor="middle" font-size="12" fill="#e6edf3">L3 协议栈层</text>
+      </g>
+      <g>
+        <rect x="560" y="214" width="160" height="48" rx="8" fill="#1c2333" stroke="#bc8cff" stroke-width="0.5"/>
+        <text x="640" y="238" text-anchor="middle" font-size="12" fill="#e6edf3">L2 数据处理层</text>
+      </g>
+      <g>
+        <rect x="732" y="214" width="162" height="48" rx="8" fill="#1c2333" stroke="#bc8cff" stroke-width="0.5"/>
+        <text x="813" y="238" text-anchor="middle" font-size="12" fill="#e6edf3">L1 HAL 层</text>
+      </g>
+      <g>
+        <rect x="44" y="276" width="200" height="40" rx="8" fill="#161b22" stroke="#bc8cff" stroke-width="0.5"/>
+        <text x="144" y="296" text-anchor="middle" font-size="12" fill="#bc8cff">RBS 剩余总线仿真引擎</text>
+      </g>
+      <g>
+        <rect x="258" y="276" width="200" height="40" rx="8" fill="#161b22" stroke="#bc8cff" stroke-width="0.5"/>
+        <text x="358" y="296" text-anchor="middle" font-size="12" fill="#bc8cff">Python DSL + CAPL 兼容层</text>
+      </g>
+      <g>
+        <rect x="472" y="276" width="200" height="40" rx="8" fill="#161b22" stroke="#bc8cff" stroke-width="0.5"/>
+        <text x="572" y="296" text-anchor="middle" font-size="12" fill="#bc8cff">UDS/ODX 诊断栈 + 协议族</text>
+      </g>
+      <g>
+        <rect x="686" y="276" width="208" height="40" rx="8" fill="#161b22" stroke="#bc8cff" stroke-width="0.5"/>
+        <text x="790" y="296" text-anchor="middle" font-size="12" fill="#bc8cff">测试引擎 · 用例编译 · 报告</text>
+      </g>
+    </g>
+    <g>
+      <rect x="30" y="350" width="880" height="100" rx="14" fill="#085041" stroke="#39d0d8" stroke-width="0.6"/>
+      <text x="44" y="372" font-size="12" fill="#39d0d8">③ 测试管理闭环 · 对标 vTESTstudio + TFS + ALM</text>
+      <g>
+        <rect x="44" y="384" width="156" height="52" rx="8" fill="#161b22" stroke="#39d0d8" stroke-width="0.5"/>
+        <text x="122" y="402" text-anchor="middle" font-size="12" font-weight="600" fill="#e6edf3">产品中心</text>
+        <text x="122" y="420" text-anchor="middle" font-size="11" fill="#39d0d8">产品档案 · 车型矩阵</text>
+      </g>
+      <g>
+        <rect x="218" y="384" width="156" height="52" rx="8" fill="#161b22" stroke="#39d0d8" stroke-width="0.5"/>
+        <text x="296" y="402" text-anchor="middle" font-size="12" font-weight="600" fill="#e6edf3">用例 Studio</text>
+        <text x="296" y="420" text-anchor="middle" font-size="11" fill="#39d0d8">图形 + 表格双模式</text>
+      </g>
+      <g>
+        <rect x="392" y="384" width="156" height="52" rx="8" fill="#161b22" stroke="#39d0d8" stroke-width="0.5"/>
+        <text x="470" y="402" text-anchor="middle" font-size="12" font-weight="600" fill="#e6edf3">Test Runner</text>
+        <text x="470" y="420" text-anchor="middle" font-size="11" fill="#39d0d8">断言 · 四态判定</text>
+      </g>
+      <g>
+        <rect x="566" y="384" width="156" height="52" rx="8" fill="#161b22" stroke="#39d0d8" stroke-width="0.5"/>
+        <text x="644" y="402" text-anchor="middle" font-size="12" font-weight="600" fill="#e6edf3">报告系统</text>
+        <text x="644" y="420" text-anchor="middle" font-size="11" fill="#39d0d8">HTML/PDF/Excel/Word</text>
+      </g>
+      <g>
+        <rect x="740" y="384" width="154" height="52" rx="8" fill="#161b22" stroke="#39d0d8" stroke-width="0.5"/>
+        <text x="817" y="402" text-anchor="middle" font-size="12" font-weight="600" fill="#e6edf3">缺陷中心</text>
+        <text x="817" y="420" text-anchor="middle" font-size="11" fill="#39d0d8">生命周期 · 一键建单</text>
+      </g>
+    </g>
+  </svg>
+
+  <h3>3.2 软件分层架构</h3>
+  <p>软件采用五层分层架构，层间通过明确接口契约通信，横切关注点（配置管理、线程池、事件总线、插件系统、日志审计）贯穿所有层：</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th style="width:110px">层次</th><th>职责</th><th>关键组件</th><th>依赖方向</th></tr></thead>
+      <tbody>
+        <tr><td><span class="tag tag-blue">L5 UI 层</span></td><td>视图渲染与用户交互</td><td>Trace / Graphics / Statistics / 示波器 / 用例编辑器 / 看板</td><td>→ L4（信号槽）</td></tr>
+        <tr><td><span class="tag tag-purple" style="background:rgba(188,140,255,0.15);color:var(--accent-purple);border:1px solid rgba(188,140,255,0.35);">L4 业务逻辑层</span></td><td>过滤/统计/任务调度/测试执行</td><td>过滤器、统计引擎、Test Runner、用例库服务、RBS 控制器</td><td>→ L3（帧事件）</td></tr>
+        <tr><td><span class="tag tag-teal">L3 协议栈层</span></td><td>协议编解码与数据库解析</td><td>CAN/CAN FD/XL、LIN、J1939、CANopen、ISO-TP、DBC/LDF/ODX</td><td>→ L2（原始帧）</td></tr>
+        <tr><td><span class="tag tag-orange">L2 数据处理层</span></td><td>USB 数据包组装/分流</td><td>零拷贝管线、环形缓冲、批量解析</td><td>→ L1（USB 包）</td></tr>
+        <tr><td><span class="tag tag-red">L1 HAL 层</span></td><td>硬件抽象与异步 I/O</td><td>WinUSB 异步 I/O、设备枚举、固件升级、级联管理</td><td>→ 硬件</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>3.3 数据流程（8 阶段，端到端 &lt; 1 ms）</h3>
+  <div class="flow-steps">
+    <div class="flow-step"><div class="step-num">1</div><div class="step-title">总线物理帧</div><div class="step-desc">CAN/LIN 收发器</div></div>
+    <div class="flow-step"><div class="step-num">2</div><div class="step-title">FPGA 打戳</div><div class="step-desc">100ns 时间戳 + 过滤</div></div>
+    <div class="flow-step"><div class="step-num">3</div><div class="step-title">MCU 组帧</div><div class="step-desc">FDCAN+DMA 聚合</div></div>
+    <div class="flow-step"><div class="step-num">4</div><div class="step-title">USB HS 传输</div><div class="step-desc">480Mbps Bulk 异步</div></div>
+    <div class="flow-step"><div class="step-num">5</div><div class="step-title">HAL 接收</div><div class="step-desc">WinUSB 异步 I/O</div></div>
+    <div class="flow-step"><div class="step-num">6</div><div class="step-title">协议解码</div><div class="step-desc">DBC/LDF + 协议栈</div></div>
+    <div class="flow-step"><div class="step-num">7</div><div class="step-title">业务处理</div><div class="step-desc">过滤/统计/日志/断言</div></div>
+    <div class="flow-step"><div class="step-num">8</div><div class="step-title">UI 渲染</div><div class="step-desc">60fps 批量刷新</div></div>
+  </div>
+
+  <h3>3.4 核心数据血缘</h3>
+  <div class="code-block"><span class="cm"># 简化 ER：产品 → 计划 → 批次 → 结果 → 缺陷（产品是唯一主入口）</span>
+Product 1─N VehicleMatrix         <span class="cm"># 产品含车型矩阵</span>
+Product 1─N TestPlan              <span class="cm"># 产品挂多个测试计划</span>
+TestPlan 1─N TestRun              <span class="cm"># 计划可执行多个批次</span>
+TestRun  1─N CaseResult           <span class="cm"># 批次含逐用例结果</span>
+CaseResult 0─1 Defect             <span class="cm"># 失败结果可产生缺陷（一键建单）</span>
+Defect   1─1 Product, 1─1 Vehicle <span class="cm"># 缺陷携带产品+车型上下文</span>
+Defect   0─N RegressionRun        <span class="cm"># 回归验证关联批次</span></div>
+</div>
+
+<!-- ================= 4. 硬件平台设计 ================= -->
+<div class="section" id="c4">
+  <span class="section-number">4</span><h2>硬件平台设计</h2>
+
+  <h3>4.1 总体方案：FPGA + MCU 双核架构</h3>
+  <p>对标 Vector VN1630A（4 通道 CAN/FD）与 VN8900 系列架构，采用 <b>FPGA + MCU 双核架构</b>：<b>FPGA 承担所有时间关键型任务</b>（时间戳、过滤、注入、采样、同步），<b>MCU 承担协议处理、调度表执行与 USB 传输</b>。该架构与 CANoe 硬件（内部 FPGA/ASIC）同构，是"接近 CANoe"的硬件基础。</p>
+
+  <h3>4.2 核心器件选型</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>功能模块</th><th>推荐器件</th><th>v1.0 器件</th><th>关键参数</th><th>升级要点</th></tr></thead>
+      <tbody>
+        <tr><td>主控 MCU</td><td><code>STM32H750VBT6</code></td><td>STM32F407</td><td>480MHz Cortex-M7, 双 FDCAN</td><td>2 组 FDCAN 控制器（每组 2 通道）</td></tr>
+        <tr><td>FPGA 协处理器</td><td><code>Artix-7 XC7A35T</code> / 国产 <code>EG4S20</code></td><td>无</td><td>20-33K LUT, 225 I/O</td><td>时间戳/过滤/注入/采样/同步全硬件化</td></tr>
+        <tr><td>USB PHY</td><td><code>USB3300</code> (ULPI)</td><td>MCU 内置 FS</td><td>USB 2.0 HS 480Mbps</td><td>吞吐提升 40 倍（12→480Mbps）</td></tr>
+        <tr><td>CAN 收发器 ×4</td><td><code>TJA1463</code> (CAN SIC XL)</td><td>TJA1042</td><td>CAN 2.0/FD/XL, 20Mbit/s</td><td>兼容 CAN XL 物理层</td></tr>
+        <tr><td>LIN 收发器 ×2</td><td><code>TJA1027T/20</code></td><td>TJA1028</td><td>20kbps, 内部上拉 1kΩ</td><td>独立 LIN 电源引脚</td></tr>
+        <tr><td>隔离</td><td><code>ISO1042</code> ×4 + <code>ISO7742</code> ×2</td><td>ISO1042 ×2</td><td>5kVrms, 双向</td><td>每通道独立隔离</td></tr>
+        <tr><td>时钟</td><td><code>TCXO 10MHz ±10ppm</code></td><td>普通晶振</td><td>±10ppm 温漂</td><td>时间戳长期稳定性基础</td></tr>
+        <tr><td>同步接口</td><td>PPS 输入 + 级联同步帧</td><td>无</td><td>&lt;1µs 跨设备偏差</td><td>对标 MagiSync / CANoe 硬件同步</td></tr>
+        <tr><td>物理层采样</td><td>FPGA 内置 ADC (1GS/s)</td><td>无</td><td>1GS/s 8bit</td><td>内嵌示波器功能</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>4.3 FPGA 协处理器功能划分</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th style="width:140px">FPGA IP 模块</th><th>功能</th><th>性能指标</th></tr></thead>
+      <tbody>
+        <tr><td>时间戳引擎</td><td>所有帧统一打戳（TCXO 参考）</td><td>100ns 分辨率</td></tr>
+        <tr><td>硬件过滤器</td><td>ID 掩码/范围/类型过滤，PCIe 式 DMA 风格</td><td>4 通道并行，零 CPU</td></tr>
+        <tr><td>错误帧注入器</td><td>位错误/CRC/ACK/填充/毛刺注入</td><td>逐位级精度</td></tr>
+        <tr><td>物理层采样</td><td>总线电平采样 + 波形缓冲</td><td>1GS/s，256KB 环形</td></tr>
+        <tr><td>发送调度器</td><td>周期/事件/突发发送时序生成</td><td>抖动 &lt;100µs</td></tr>
+        <tr><td>PPS 同步</td><td>跨设备时钟对齐</td><td>&lt;1µs</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>4.4 USB 高速链路设计</h3>
+  <ul>
+    <li><b>接口</b>：USB3300 ULPI PHY + STM32H750 OTG HS 控制器，480Mbps。</li>
+    <li><b>端点规划</b>：EP1 Bulk IN（数据流，1024B 多包）、EP2 Bulk OUT（命令/发送）、EP3 Interrupt IN（事件/错误通知）。</li>
+    <li><b>带宽核算</b>：4×CAN FD 满负载约 4×8Mbit/s=4MB/s 净荷 + 协议头，480Mbps 链路理论 60MB/s，余量约 <b>2.3 倍</b>，支持 8 通道全速采集。</li>
+    <li><b>批量模式</b>：批量解析 16 帧/包，MMAP 零拷贝 + 双缓冲，规避小包中断风暴。</li>
+    <li><b>固件升级</b>：DFU 模式 + 双 Bank OTA，掉电安全。</li>
+  </ul>
+
+  <h3>4.5 硬件规格对标（vs VN1630A）</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th style="width:180px">规格</th><th>Vector VN1630A</th><th>本平台 v3.0</th><th>结论</th></tr></thead>
+      <tbody>
+        <tr><td>架构</td><td>FPGA/ASIC + MCU</td><td>Artix-7 FPGA + STM32H750</td><td><span class="tag tag-green">同构</span></td></tr>
+        <tr><td>通道</td><td>4×CAN/FD（可扩展）</td><td>8 通道（4×CAN FD/XL + 2×LIN + 预留）</td><td><span class="tag tag-green">超越</span></td></tr>
+        <tr><td>USB</td><td>2.0 HS / 3.0</td><td>USB 2.0 HS 480Mbps</td><td><span class="tag tag-green">持平</span></td></tr>
+        <tr><td>时间戳</td><td>100ns</td><td>100ns（FPGA）</td><td><span class="tag tag-green">持平</span></td></tr>
+        <tr><td>聚合吞吐</td><td>≥30,000 msg/s</td><td>≥50,000 msg/s</td><td><span class="tag tag-green">超越</span></td></tr>
+        <tr><td>错误注入</td><td>部分型号支持</td><td>全通道位级注入</td><td><span class="tag tag-green">超越</span></td></tr>
+        <tr><td>物理层采样</td><td>需外接示波器</td><td>内嵌 1GS/s 采样</td><td><span class="tag tag-green">超越</span></td></tr>
+        <tr><td>多设备同步</td><td>硬件同步卡</td><td>PPS + 级联 4 台=32 通道</td><td><span class="tag tag-green">持平</span></td></tr>
+        <tr><td>价格</td><td>数万元/通道级</td><td>约 1/10</td><td><span class="tag tag-blue">成本优势</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ================= 5. 协议支持 ================= -->
+<div class="section" id="c5">
+  <span class="section-number">5</span><h2>协议支持</h2>
+
+  <h3>5.1 CAN / CAN FD / CAN XL</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th style="width:140px">能力</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td>帧格式</td><td>CAN 2.0A 标准帧 / 2.0B 扩展帧 / CAN FD（经典+FD 帧）</td></tr>
+        <tr><td>波特率</td><td>CAN 最高 1Mbit/s；FD 仲裁 ≤1Mbit/s + 数据段 ≤8Mbit/s；XL ≤20Mbit/s</td></tr>
+        <tr><td>远程帧</td><td>RTR 收发支持</td></tr>
+        <tr><td>错误处理</td><td>错误帧检测/统计/着色标注，错误注入（位/CRC/ACK/填充/毛刺）</td></tr>
+        <tr><td>过滤</td><td>硬件过滤（FPGA ID 掩码）+ 软件多级过滤</td></tr>
+        <tr><td>模式</td><td>正常/回环/只听（listen-only）模式</td></tr>
+        <tr><td>CAN XL</td><td>硬件 TJA1463 + FPGA XL 帧处理（v2.0+）</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>5.2 LIN</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th style="width:140px">能力</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td>协议版本</td><td>LIN 1.3 / 2.0 / 2.1</td></tr>
+        <tr><td>模式</td><td>主节点 / 从节点模式切换</td></tr>
+        <tr><td>调度表</td><td>调度表解析与执行（LDF 驱动）、主任务帧时隙规划</td></tr>
+        <tr><td>帧类型</td><td>无条件帧 / 事件触发帧 / 偶发帧 / 诊断帧 / 保留帧</td></tr>
+        <tr><td>休眠唤醒</td><td>总线休眠 / 唤醒处理与注入</td></tr>
+        <tr><td>校验和</td><td>经典校验和 / 增强校验和自动识别</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>5.3 数据库文件支持</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>格式</th><th>支持内容</th><th>状态</th></tr></thead>
+      <tbody>
+        <tr><td><code>.dbc</code></td><td>报文/信号/多路复用/Value Table/注释/属性</td><td><span class="tag tag-green">v1.0 已支持</span></td></tr>
+        <tr><td><code>.ldf</code></td><td>LIN 描述文件全解析（节点/帧/调度表/信号）</td><td><span class="tag tag-green">v1.0 已支持</span></td></tr>
+        <tr><td><code>.odx / .pdx</code></td><td>诊断描述（服务/参数/DID/DTC）</td><td><span class="tag tag-blue">v2.0 支持</span></td></tr>
+        <tr><td><code>.arxml</code></td><td>AUTOSAR 系统描述（预留）</td><td><span class="tag tag-orange">规划</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>5.4 诊断协议</h3>
+  <ul>
+    <li><b>UDS (ISO 14229)</b>：全服务支持（诊断会话/读写 DID/例程控制/安全访问/上下传数据），请求-响应交互式会话。</li>
+    <li><b>OBD-II (ISO 15031)</b>：模式 01-0A，PID 解析，排放相关。</li>
+    <li><b>LIN 诊断</b>：NAD 寻址、主/从请求响应、诊断传输层（ISO 17987）。</li>
+    <li><b>安全访问</b>：Seed&Key 算法插件化（C/Python 动态脚本）。</li>
+    <li><b>刷写</b>：Bootloader 流程模板（擦除→写入→校验→跳转），Flash 驱动加载。</li>
+    <li><b>DTC 管理</b>：故障码读取/清除/冻结帧，ODX 语义化显示。</li>
+  </ul>
+
+  <h3>5.5 协议族扩展</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>协议</th><th>内容</th><th>状态</th></tr></thead>
+      <tbody>
+        <tr><td>J1939</td><td>PGN/SPN 解析、多包传输（TP）、地址声明、BAM/RTS-CTS</td><td><span class="tag tag-blue">v2.0</span></td></tr>
+        <tr><td>CANopen</td><td>NMT / SDO / PDO / EMCY / Heartbeat</td><td><span class="tag tag-blue">v2.0</span></td></tr>
+        <tr><td>ISO-TP</td><td>CAN 传输层（15765-2），单帧/多帧/流控</td><td><span class="tag tag-blue">v2.0</span></td></tr>
+        <tr><td>FlexRay / Ethernet</td><td>插件化预留</td><td><span class="tag tag-orange">v3.0 规划</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>5.6 USB 通信协议（HAL 层）</h3>
+  <div class="code-block"><span class="cm"># USB 帧头（16B）：与硬件固件约定，大小端统一小端</span>
+<span class="kw">typedef struct</span> {
+  uint16_t magic;        <span class="cm">// 0xCA5A 校验魔数</span>
+  uint8_t  type;         <span class="cm">// 0x01=数据帧 0x02=命令 0x03=事件 0x04=诊断</span>
+  uint8_t  channel;      <span class="cm">// 0-3=CAN 4-5=LIN 6=系统</span>
+  uint16_t length;       <span class="cm">// 有效载荷长度</span>
+  uint16_t seq;          <span class="cm">// 序号（丢包检测）</span>
+  uint8_t  flags;        <span class="cm">// bit0=TX bit1=错误帧 bit2=FD</span>
+  uint8_t  reserved;
+  uint32_t timestamp;    <span class="cm">// FPGA 100ns 打戳</span>
+} usb_frame_header_t;</div>
+</div>
+
+<!-- ================= 6. 软件平台设计 ================= -->
+<div class="section" id="c6">
+  <span class="section-number">6</span><h2>软件平台设计</h2>
+
+  <h3>6.1 技术选型</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th style="width:140px">层次/组件</th><th>技术选型</th><th>理由</th></tr></thead>
+      <tbody>
+        <tr><td>桌面框架</td><td>Qt 6 (C++17) + QML</td><td>跨平台、高性能表格/图形渲染、与流程画布同栈</td></tr>
+        <tr><td>脚本引擎</td><td>Python 3.11 (pybind11 嵌入)</td><td>DSL 语法简洁、生态丰富（numpy/matplotlib）</td></tr>
+        <tr><td>数据库</td><td>SQLite（单机）→ PostgreSQL（团队）</td><td>零运维 → 协作升级，数据模型一致</td></tr>
+        <tr><td>报告</td><td>Jinja2 + Chart.js + openpyxl + python-docx + 无头 Chromium</td><td>HTML/PDF/Excel/Word 多格式版式一致</td></tr>
+        <tr><td>日志</td><td>BLF / ASC / MF4 / CSV / JSON</td><td>与 CANoe 格式兼容，MMAP 异步落盘</td></tr>
+        <tr><td>构建</td><td>CMake + vcpkg + CI（GitHub Actions/Jenkins）</td><td>可复现构建 + 自动化回归</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>6.2 CANoe 对象模型映射</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>CANoe 概念</th><th>本平台映射</th></tr></thead>
+      <tbody>
+        <tr><td>Simulation Setup / Bus</td><td>总线/通道对象树（Bus→Channel→Node→Signal）</td></tr>
+        <tr><td>Network Node + 节点模型</td><td>Python 节点模型类（on_message / on_signal 回调）</td></tr>
+        <tr><td>CAPL 事件</td><td>@on_message / @on_timer / @on_error → Python 装饰器 DSL</td></tr>
+        <tr><td>Interaction Layer</td><td>RBS 调度表 + 生成器（IG）</td></tr>
+        <tr><td>Test Feature Set</td><td>Python TFS 装饰器 + 断言库（v2.1）</td></tr>
+        <tr><td>Database 管理器</td><td>DBC/LDF/ODX 资源管理器（版本化）</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>6.3 剩余总线仿真引擎（RBS）</h3>
+  <ul>
+    <li><b>确定性事件循环</b>：1ms 基准时隙 + 高精度补偿，保证调度表帧时隙确定性。</li>
+    <li><b>调度表驱动</b>：LDF/CAN 矩阵调度表解析执行，支持周期/事件/突发三种发送模式。</li>
+    <li><b>节点行为模型</b>：Python 定义信号处理逻辑（状态机、抖动、故障注入），与仿真节点分离。</li>
+    <li><b>交互式生成器（IG）</b>：手动拖拽信号值即时改变发送帧内容，运行中动态启停。</li>
+    <li><b>混合模式</b>：回放（Replay）与仿真叠加——在录制日志上"接入"虚拟节点，复现现场。</li>
+    <li><b>故障注入</b>：信号超差、帧丢失、错误帧、总线关断，供负向测试用例使用。</li>
+  </ul>
+
+  <h3>6.4 脚本系统（Python DSL + CAPL 兼容层）</h3>
+  <div class="code-block"><span class="cm"># CAPL 兼容示例：CAPL 代码与 Python DSL 语义对齐</span>
+<span class="cm">/* CAPL 原始代码 */</span>
+on message EngineData_01 { if (this.RPM &gt; 3000) output(this); }
+
+<span class="cm"># Python DSL 等价实现</span>
+@on_message("EngineData_01")
+def handle(msg):
+    if msg.signals["RPM"] &gt; 3000:
+        bus.send(msg)
+        log.info(f"RPM overrun: {msg.signals['RPM']}")</div>
+  <ul>
+    <li><b>事件模型兼容</b>：on_message / on_timer / on_error / on_key / on_start / on_stop 全语义对齐。</li>
+    <li><b>函数库兼容</b>：output() / setSignal() / getSignal() / setTimer() / write() 等 CAPL 函数提供 Python 等价物。</li>
+    <li><b>IDE 支持</b>：代码补全、断点调试、单步、变量监视、错误定位。</li>
+    <li><b>转换工具链</b>：.can 存量工程导入器（解析 CAPL → 生成 Python，规划）。</li>
+  </ul>
+
+  <h3>6.5 诊断栈</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>组件</th><th>功能</th></tr></thead>
+      <tbody>
+        <tr><td>诊断会话管理器</td><td>会话切换、时序参数（P2/P3）管理、并发请求队列</td></tr>
+        <tr><td>服务层</td><td>UDS 全服务 + OBD 模式 + LIN 诊断</td></tr>
+        <tr><td>安全访问</td><td>Seed&Key 插件化（算法脚本热加载）</td></tr>
+        <tr><td>刷写流程</td><td>预编程→擦除→写入→校验→跳转 状态机，断点续传</td></tr>
+        <tr><td>DTC 管理</td><td>读取/清除/冻结帧 + ODX 语义化</td></tr>
+        <tr><td>ODX 引擎</td><td>ODX/PDX 解析、诊断描述树、参数映射</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>6.6 核心数据结构</h3>
+  <div class="code-block"><span class="cm">// 总线帧统一结构（L2→L5 贯通）</span>
+<span class="kw">struct</span> BusFrame {
+  uint64_t     timestamp;    <span class="cm">// 100ns 分辨率</span>
+  BusType      type;         <span class="cm">// CAN / CANFD / CANXL / LIN</span>
+  uint8_t      channel;
+  Direction    dir;          <span class="cm">// RX / TX</span>
+  uint32_t     id;           <span class="cm">// 标准/扩展 ID（含标志位）</span>
+  bool         extended;
+  bool         fd;           <span class="cm">// CAN FD 标志</span>
+  uint8_t      dlc;
+  uint8_t      data[64];     <span class="cm">// CAN XL 最大 64B</span>
+  FrameStatus  status;       <span class="cm">// OK / ERROR / OVERRUN</span>
+  uint8_t      *db_ctx;      <span class="cm">// DBC/LDF 解析上下文</span>
+};</div>
+
+  <h3>6.7 线程模型</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>线程</th><th>职责</th><th>优先级</th></tr></thead>
+      <tbody>
+        <tr><td>HAL I/O 线程</td><td>USB 异步读写、设备枚举</td><td>最高</td></tr>
+        <tr><td>解码线程池</td><td>协议解码 + DBC 解析（批量 16 帧）</td><td>高</td></tr>
+        <tr><td>仿真/脚本线程</td><td>RBS 事件循环、Python GIL 隔离</td><td>高</td></tr>
+        <tr><td>测试执行线程</td><td>Test Runner 调度、断言看门狗</td><td>高</td></tr>
+        <tr><td>UI 主线程</td><td>渲染 + 交互（16ms 批量刷新）</td><td>普通</td></tr>
+        <tr><td>日志线程</td><td>MMAP 异步落盘</td><td>低</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>6.8 UI 界面设计</h3>
+  <p>主界面采用<b>四区布局 + 顶部工具栏 + 底部状态栏</b>的 IDE 式设计；新增模块以独立视图接入左侧导航（产品中心 / 测试结果 / 缺陷中心）：</p>
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-title"><div class="card-icon" style="background:rgba(88,166,255,0.15);color:var(--accent-blue);">T</div>报文监控（中央）</div>
+      <div class="card-body"><ul>
+        <li>时间戳 / ID / 名称 / DLC / 数据 / 方向列</li>
+        <li>RX 绿 / TX 橙 / ERR 红着色</li>
+        <li>多级过滤 + 书签 + 列配置 + 暂停冻结</li>
+      </ul></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><div class="card-icon" style="background:rgba(57,208,216,0.15);color:var(--accent-teal);">S</div>信号检查器（右侧）</div>
+      <div class="card-body"><ul>
+        <li>信号物理值条形图 + 实时趋势波形</li>
+        <li>多信号时间轴 + 10 万点滚动 + 光标测量</li>
+        <li>State Tracker 状态追踪视图</li>
+      </ul></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><div class="card-icon" style="background:rgba(188,140,255,0.15);color:var(--accent-purple);">C</div>通道/资源（左侧）</div>
+      <div class="card-body"><ul>
+        <li>CAN/LIN 通道管理、连接/启停</li>
+        <li>DBC/LDF/ODX 数据库 + 工作空间</li>
+        <li>产品/车型/资源包切换器</li>
+      </ul></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><div class="card-icon" style="background:rgba(210,153,34,0.15);color:var(--accent-orange);">B</div>状态栏（底部）</div>
+      <div class="card-body"><ul>
+        <li>连接状态 / 设备 / 帧统计 / 总线负载</li>
+        <li>日志文件路径 / 录制指示</li>
+      </ul></div>
+    </div>
+  </div>
+  <p><b>交互设计原则</b>：单键启动/停止、右键上下文菜单、键盘快捷方式、深色主题（跟随系统）、国际化（中/英）。</p>
+</div>
+
+<!-- ================= 7. 测试用例管理与执行 ================= -->
+<div class="section" id="c7">
+  <span class="section-number">7</span><h2>测试用例管理与执行引擎</h2>
+
+  <h3>7.1 测试用例编辑器（Test Case Studio，对标 vTESTstudio）</h3>
+  <ul>
+    <li><b>双模式编辑</b>：图形流程（拖拽节点）+ 步骤表格（Excel 式）双向实时同步，以统一 IR 中间表示保证一致性。</li>
+    <li><b>用例数据模型</b>：用例头（ID/名称/作者/版本/标签）/ 前置条件 / 测试步骤 / 期望判定，四段式全字段可版本化、可评审、可追溯。</li>
+    <li><b>10 类步骤类型库</b>：发送帧 / 写信号 / 等待接收 / 断言 / 延时 / 诊断请求 / 循环分支 / 执行脚本 / 用户交互 / 采集。</li>
+    <li><b>参数化 + 数据驱动</b>：<code>${frame_id}</code> 参数表引用，一行数据 = 一轮循环，1 个用例跑 N 组输入。</li>
+    <li><b>资源绑定</b>：DBC/LDF/ODX/仿真节点/脚本以资源包形式关联——切换车型仅重绑资源，用例本体零修改。</li>
+  </ul>
+
+  <h3>7.2 测试用例库管理</h3>
+  <ul>
+    <li><b>组织与检索</b>：目录树 + 标签 + 全文检索 + 收藏。</li>
+    <li><b>版本与评审</b>：版本快照 + Baseline 锁定 + 评审工作流（草稿→评审中→已批准→已废弃）+ 审批签名（IATF 16949 审计友好）。</li>
+    <li><b>需求追溯</b>：需求覆盖矩阵自动生成，覆盖缺口红/橙高亮。</li>
+    <li><b>复用机制</b>：公共步骤库 + 用例模板 + 用例继承（子用例覆盖父用例步骤）。</li>
+    <li><b>存储与协作</b>：YAML 文件存储（<code>workspace/cases/&lt;模块&gt;/TC-1001.yaml</code>）+ Git 版本控制 + 用例索引 SQLite。</li>
+  </ul>
+
+  <h3>7.3 测试执行引擎（Test Runner，对标 TFS）</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th style="width:160px">能力</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td>测试配置</td><td>Test Configuration 关联：产品 / 车型 / 通道 / 仿真节点 / 资源包 / 环境快照</td></tr>
+        <tr><td>执行调度</td><td>串行/并行调度、依赖排序（setup→case→teardown）、失败策略（继续/中止/重试）、上下文隔离</td></tr>
+        <tr><td>超时看门狗</td><td>双级超时：单步超时 + 用例总超时，防死锁</td></tr>
+        <tr><td>断言库</td><td>wait_for_message / check_signal / verify_frame / check_cycle_time / check_diag_response / check_error_frame 等</td></tr>
+        <tr><td>四态判定</td><td>PASS / FAIL / BLOCKED / SKIPPED + 失败分类（信号超差/超时/帧缺失/环境/脚本）</td></tr>
+        <tr><td>执行监控</td><td>实时进度、暂停/单步/终止、用例级日志</td></tr>
+        <tr><td>联动</td><td>与 RBS 仿真 / 诊断栈 / 脚本引擎 / 事件总线深度联动</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="code-block"><span class="cm"># 断言 API 示例（Python DSL）</span>
+@testcase("TC-1001", title="车速信号周期监控", pre="连接 CAN1 + 加载 DBC")
+def tc_1001(ctx):
+    ctx.wait_for_message("VehicleSpeed", timeout=1000)     <span class="cm"># 等待报文</span>
+    ctx.check_cycle_time("VehicleSpeed", expected=100, tol=10) <span class="cm"># 周期 100±10ms</span>
+    ctx.check_signal("VehicleSpeed.Speed", in_range=(0, 250))  <span class="cm"># 范围断言</span>
+    ctx.check_diag_response(0x7E0, service=0x22, did=0xF190, positive=True)</div>
+
+  <h3>7.4 测试报告系统（对标 Test Report Viewer）</h3>
+  <ul>
+    <li><b>格式</b>：HTML / PDF / Excel / Word 四格式输出 + 企业模板（Logo/封面/签名位）+ 中英双语。</li>
+    <li><b>统计指标</b>：通过率、首次失败率 FPY、失败分布、需求覆盖度、基线差值、执行时长共 7 项。</li>
+    <li><b>失败现场</b>：断言期望 vs 实际值 + 前后 500ms 波形 + 相关帧序列，一键展开。</li>
+    <li><b>附件</b>：日志（BLF/MF4）、波形截图、诊断帧序列自动打包归档。</li>
+    <li><b>历史与基线</b>：历史趋势曲线 + 基线对比（新失败/回归修复差异摘要）。</li>
+    <li><b>CI 集成</b>：命令行执行、Jenkins/GitLab CI 触发、质量门禁、缺陷自动建单。</li>
+  </ul>
+  <div class="callout">
+    <strong>生成流程：</strong>执行记录 + 采集附件 → 归一化（JSON）→ Jinja2 模板渲染 → HTML 主报告 + PDF（无头 Chromium 打印）/ Excel / Word 导出，千级用例报告生成 &lt; 5s。
+  </div>
+</div>
+
+<!-- ================= 8. 测试产品与缺陷跟踪 ================= -->
+<div class="section" id="c8">
+  <span class="section-number">8</span><h2>测试产品与缺陷跟踪管理</h2>
+
+  <h3>8.1 测试产品管理（对标 Polarion ALM / Jama）</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th style="width:170px">维度</th><th>内容</th></tr></thead>
+      <tbody>
+        <tr><td>产品档案</td><td>产品名称、产品型号（含 OEM 件号）、ECU 类型、软硬件版本、总线配置、VIN 规则、生命周期（预研/研发验证/量产测试/已归档）</td></tr>
+        <tr><td>车型适配矩阵</td><td>「平台 × 车型」矩阵，记录 CAN 矩阵版本（DBC v23）、LIN 拓扑（LDF v5）、协议版本、覆盖状态红黄预警；勾选车型自动生成参数化测试计划</td></tr>
+        <tr><td>资源绑定</td><td>按车型切换 DBC/LDF/ODX 资源包（SHA-256 校验），DBC/LDF/仿真节点/脚本统一资源包管理</td></tr>
+        <tr><td>产品基线</td><td>一键冻结「SW/HW + 车型矩阵 + 资源 + 用例集」快照，实现可复现测试</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>8.2 测试结果管理（对标 TestRail）</h3>
+  <ul>
+    <li><b>测试批次模型</b>：每次执行为一个 Test Run（产品/车型/计划/环境快照/执行模式/结果汇总），逐用例结果携带判定、断言详情、附件引用与缺陷引用。</li>
+    <li><b>结果状态机</b>：待执行 → 执行中 → 通过 / 失败 / 阻塞 / 跳过（与用例四态一致）。</li>
+    <li><b>归档与对比</b>：3 个月热数据 / 12 个月冷归档 + 批次 SHA-256 防篡改（IATF 16949 审计友好）；A/B 版本两列并排 diff。</li>
+    <li><b>质量指标</b>：通过率、首次通过率 FPY、失败分类分布、缺陷密度、回归率 + 趋势曲线 + CI 质量门禁。</li>
+  </ul>
+
+  <h3>8.3 缺陷跟踪（对标 Jira / 禅道）</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th style="width:170px">能力</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td>字段模型</td><td>标题/严重度 S0-S3/优先级 P0-P3/模块/车型/现象/复现步骤/期望实际/附件/来源（手动或一键导入）</td></tr>
+        <tr><td>生命周期</td><td>新建 → 待确认 → 修复中 → 回归中 → 已关闭，含拒绝 / Reopen 分支，每次转换强制备注审计</td></tr>
+        <tr><td>优先级推荐</td><td>自动推荐 = f(严重度, 车型覆盖率, 放行影响)</td></tr>
+        <tr><td>一键建单</td><td>失败用例 10 秒生成缺陷草稿：标题自动生成、复现步骤自动带入、前后 500ms 报文序列 + 波形 + 诊断帧附件自动打包、产品/车型/版本自动填充</td></tr>
+        <tr><td>统计报表</td><td>严重度分布、模块分布、时效（SLA）、放行看板、缺陷密度趋势</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>8.4 数据模型与系统集成</h3>
+  <ul>
+    <li><b>存储</b>：单机 SQLite（结果/缺陷全量）→ 团队 PostgreSQL + 对象存储（附件）+ WebSocket 看板推送；乐观锁 + 操作审计日志。</li>
+    <li><b>核心 API（RESTful）</b>：产品 CRUD（<code>/api/products</code>）、创建基线、创建批次（<code>/api/runs</code>）、提交结果、一键建单（<code>/api/runs/{id}/defects</code>）、缺陷状态转换、趋势指标。</li>
+    <li><b>外部集成</b>：Jira / 禅道 / Polarion 连接器双向同步（单向导入为主避免双写冲突）；JSON/CSV/XLSX 导出；CI 联动（触发批次 → 结果回传 → 质量门禁 → 缺陷自动建单）。</li>
+  </ul>
+</div>
+
+<!-- ================= 9. 性能指标与竞品对标 ================= -->
+<div class="section" id="c9">
+  <span class="section-number">9</span><h2>性能指标与竞品对标</h2>
+
+  <h3>9.1 竞品工具画像（核实自公开规格）</h3>
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-title"><div class="card-icon" style="background:rgba(88,166,255,0.15);color:var(--accent-blue);">V</div>Vector CANoe 12</div>
+      <div class="card-body">工业标准全功能平台：32×CAN/64×LIN/Ethernet 通道、CAPL/Python 脚本、HIL 仿真、全总线族；价格数万欧元级。</div>
+    </div>
+    <div class="card">
+      <div class="card-title"><div class="card-icon" style="background:rgba(57,208,216,0.15);color:var(--accent-teal);">P</div>PEAK PCAN-View v6</div>
+      <div class="card-body">免费随硬件附赠：支持 CAN XL（20Mbit/s），但时间戳 100µs、单通道单实例、无脚本无 DBC。</div>
+    </div>
+    <div class="card">
+      <div class="card-title"><div class="card-icon" style="background:rgba(210,153,34,0.15);color:var(--accent-orange);">K</div>Kvaser CanKing 7.5</div>
+      <div class="card-body">免费：CAN FD + LIN + DBC/LDF + J1939/ISO-TP 解释器 + 信号绘图；无脚本、1-2 通道。</div>
+    </div>
+  </div>
+
+  <h3>9.2 性能规格对比</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th style="width:150px">规格</th><th>CANoe + VN16xx</th><th>PCAN-View v6</th><th>CanKing 7.5</th><th>本平台 v3.0</th></tr></thead>
+      <tbody>
+        <tr><td>通道</td><td>32×CAN/64×LIN</td><td>1 通道</td><td>1-2 通道</td><td><strong>8 通道（4CAN+2LIN+预留）</strong></td></tr>
+        <tr><td>USB</td><td>2.0 HS / 3.0</td><td>2.0 HS</td><td>2.0 HS</td><td><strong>2.0 HS 480Mbps</strong></td></tr>
+        <tr><td>帧吞吐</td><td>≥30,000/s</td><td>~20,000/s</td><td>20,000/s</td><td><strong>≥50,000/s</strong></td></tr>
+        <tr><td>接收时间戳</td><td>1µs（VN16xx 100ns）</td><td>100µs</td><td>1-50µs</td><td><strong>100ns</strong></td></tr>
+        <tr><td>CAN FD</td><td>8Mbit/s</td><td>8Mbit/s + CAN XL</td><td>5-8Mbit/s</td><td><strong>8Mbit/s ×4 + XL</strong></td></tr>
+        <tr><td>LIN</td><td>64 通道全仿真</td><td>无</td><td>支持+LDF</td><td><strong>2 通道主/从</strong></td></tr>
+        <tr><td>脚本</td><td>CAPL/Python/.NET</td><td>无</td><td>无</td><td><strong>Python DSL + CAPL 兼容</strong></td></tr>
+        <tr><td>价格</td><td>数万欧元级</td><td>免费</td><td>免费</td><td><strong>约 CANoe 1/100</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>9.3 差距收敛矩阵（22 项 CANoe 能力对标）</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th style="width:200px">CANoe 能力</th><th>v3.0 收敛方案</th><th style="width:110px">覆盖度</th></tr></thead>
+      <tbody>
+        <tr><td><strong>报文监控与 Trace</strong></td><td>多级过滤/书签/列配置/着色/暂停冻结，功能等价</td><td><span class="tag tag-green">达成 100%</span></td></tr>
+        <tr><td><strong>信号解析（DBC/LDF）</strong></td><td>DBC 多路复用/Motorola+Intel/枚举；LDF 调度表全解析</td><td><span class="tag tag-green">达成 100%</span></td></tr>
+        <tr><td><strong>Graphics 信号绘图</strong></td><td>多信号时间轴 + 10 万点滚动 + 光标测量</td><td><span class="tag tag-teal">接近 90%</span></td></tr>
+        <tr><td><strong>Statistics 统计</strong></td><td>负载率/帧率/周期偏差/错误分布/总线状态</td><td><span class="tag tag-teal">接近 90%</span></td></tr>
+        <tr><td><strong>剩余总线仿真</strong></td><td>RBS 引擎 + 节点行为 + 调度表 + IG + 回放叠加</td><td><span class="tag tag-teal">接近 85%</span></td></tr>
+        <tr><td><strong>节点仿真（建模）</strong></td><td>Python 节点模型 + 信号级行为 + 故障注入</td><td><span class="tag tag-teal">接近 85%</span></td></tr>
+        <tr><td><strong>CAPL 脚本</strong></td><td>Python DSL + CAPL 事件模型/函数兼容层</td><td><span class="tag tag-orange">部分 75%</span></td></tr>
+        <tr><td><strong>诊断（UDS/ODX）</strong></td><td>UDS 全服务 + ODX/PDX + Seed&Key + 刷写 + DTC</td><td><span class="tag tag-teal">接近 90%</span></td></tr>
+        <tr><td><strong>Test Feature Set</strong></td><td>Python TFS + 断言库 + 用例管理 + 报告 + CI</td><td><span class="tag tag-teal">接近 92%</span></td></tr>
+        <tr><td><strong>一致性测试</strong></td><td>CAN FD（ISO 16845-2 子集）+ LIN（ISO 17987-7 子集）</td><td><span class="tag tag-orange">部分 60%</span></td></tr>
+        <tr><td><strong>物理层示波器</strong></td><td>FPGA 1GS/s 采样 + 波形解码叠加视图</td><td><span class="tag tag-orange">部分 70%</span></td></tr>
+        <tr><td><strong>错误帧注入</strong></td><td>FPGA 注入器：位/CRC/ACK/填充/毛刺，全通道</td><td><span class="tag tag-green">达成 100%</span></td></tr>
+        <tr><td><strong>J1939 / CANopen</strong></td><td>完整协议栈（PGN/SPN、NMT/SDO/PDO）</td><td><span class="tag tag-teal">接近 90%</span></td></tr>
+        <tr><td><strong>CAN XL</strong></td><td>硬件 TJA1463 + FPGA XL 帧处理</td><td><span class="tag tag-teal">接近 85%</span></td></tr>
+        <tr><td><strong>离线分析</strong></td><td>日志独立工作区：过滤/统计/信号绘图/导出</td><td><span class="tag tag-teal">接近 85%</span></td></tr>
+        <tr><td><strong>日志格式</strong></td><td>BLF/ASC/MF4 读写 + CSV/JSON（格式兼容）</td><td><span class="tag tag-green">达成 100%</span></td></tr>
+        <tr><td><strong>SDK 与兼容层</strong></td><td>J2534/RP1210/SocketCAN + Python/C++/COM SDK</td><td><span class="tag tag-teal">接近 80%</span></td></tr>
+        <tr><td><strong>多设备同步</strong></td><td>PPS + 级联同步帧，4 设备 32 通道 &lt;1µs</td><td><span class="tag tag-teal">接近 85%</span></td></tr>
+        <tr><td><strong>用例工程化（vTESTstudio）</strong></td><td>图形+表格编辑器、用例库、评审流、需求追溯</td><td><span class="tag tag-teal">接近 90%</span></td></tr>
+        <tr><td><strong>产品/结果/缺陷管理</strong></td><td>产品档案、车型矩阵、批次管理、缺陷闭环（ALM 域）</td><td><span class="tag tag-green">达成（超出）</span></td></tr>
+        <tr><td><strong>HIL 硬件在环</strong></td><td>—（需 VT 类板卡，不在本工具范围）</td><td><span class="tag tag-red">保留差距</span></td></tr>
+        <tr><td><strong>FlexRay/MOST/AFDX + CAPL 存量工程</strong></td><td>—（FlexRay 插件 v3.0 规划；.can 导入工具链）</td><td><span class="tag tag-red">保留差距</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>9.4 能力覆盖度（雷达）与综合评估</h3>
+  <div class="bar-row"><span class="bar-label">监控分析</span><div class="bar-track"><div class="bar-fill" style="width:95%;background:#58a6ff;">CANoe 100 · v3.0 95 · v1.0 75</div></div><span class="bar-val">95</span></div>
+  <div class="bar-row"><span class="bar-label">仿真建模</span><div class="bar-track"><div class="bar-fill" style="width:85%;background:#39d0d8;">CANoe 95 · v3.0 85 · v1.0 30</div></div><span class="bar-val">85</span></div>
+  <div class="bar-row"><span class="bar-label">脚本生态</span><div class="bar-track"><div class="bar-fill" style="width:85%;background:#bc8cff;">CANoe 95 · v3.0 85 · v1.0 45</div></div><span class="bar-val">85</span></div>
+  <div class="bar-row"><span class="bar-label">诊断能力</span><div class="bar-track"><div class="bar-fill" style="width:90%;background:#3fb950;">CANoe 95 · v3.0 90 · v1.0 40</div></div><span class="bar-val">90</span></div>
+  <div class="bar-row"><span class="bar-label">测试管理</span><div class="bar-track"><div class="bar-fill" style="width:92%;background:#d29922;">CANoe 95 · v3.0 92 · v1.0 30</div></div><span class="bar-val">92</span></div>
+  <div class="bar-row"><span class="bar-label">性能硬件</span><div class="bar-track"><div class="bar-fill" style="width:95%;background:#f85149;">CANoe 100 · v3.0 95 · v1.0 50</div></div><span class="bar-val">95</span></div>
+
+  <div class="note">
+    <strong>综合评估：</strong>22 项能力中 6 项达成（100%）、12 项接近（80-92%）、2 项部分（60-75%）、2 项保留差距。加权综合覆盖度约 <strong>92%</strong>（v1.0→63.5 分、v2.0→~85、v3.0→<strong>~89 分</strong>，CANoe 为 91.5）。性能硬件指标持平或超越 VN16xx 基线。
+  </div>
+</div>
+
+<!-- ================= 10. 开发计划 ================= -->
+<div class="section" id="c10">
+  <span class="section-number">10</span><h2>开发计划</h2>
+
+  <h3>10.1 总体计划（40 周 / 3 Phase）</h3>
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="timeline-dot" style="background:var(--accent-orange);"></div>
+      <div class="timeline-phase">Phase A：硬件平台 + 固件 + 基础软件重构<span class="timeline-duration">第 1-14 周</span></div>
+      <div class="timeline-content"><ul>
+        <li>FPGA+MCU 双核板原理图/PCB（8 通道）/EMC 预测试</li>
+        <li>FPGA IP 开发：时间戳/过滤/注入/采样/发送调度器</li>
+        <li>MCU 固件：FDCAN×4 / LIN×2 驱动 + USB ULPI 传输 + DFU OTA</li>
+        <li>PC 端重构：对象模型（Bus/Channel/Node）+ HAL + 零拷贝管线</li>
+        <li><b>里程碑 M1</b>：硬件平台 + 吞吐/时间戳基准测试达标</li>
+      </ul></div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot" style="background:var(--accent-blue);"></div>
+      <div class="timeline-phase">Phase B：仿真引擎 + 脚本 + 协议族 + 诊断<span class="timeline-duration">第 15-28 周</span></div>
+      <div class="timeline-content"><ul>
+        <li>RBS 仿真引擎（确定性事件循环 + 调度表 + 节点模型）</li>
+        <li>Python DSL + CAPL 兼容层（事件模型/函数库/IDE 支持）</li>
+        <li>协议栈：J1939 / CANopen / ISO-TP / CAN XL</li>
+        <li>诊断栈：UDS 全服务 + ODX 导入 + Seed&Key + 刷写流程</li>
+        <li>分析视图：Trace/Graphics/Statistics/State Tracker/示波器</li>
+        <li><b>里程碑 M2</b>：仿真+诊断功能完整的 Beta 版</li>
+      </ul></div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot" style="background:var(--accent-green);"></div>
+      <div class="timeline-phase">Phase C：测试框架 + 兼容层 + 认证发布<span class="timeline-duration">第 29-40 周</span></div>
+      <div class="timeline-content"><ul>
+        <li>TFS 测试框架 + 一致性测试套件（CAN FD/LIN 子集）</li>
+        <li>J2534/RP1210/SocketCAN 兼容层 + MF4 日志 + 离线分析</li>
+        <li>多设备级联同步验证 + 72h 稳定性测试</li>
+        <li>CE/FCC 认证 + 用户手册 + 示例工程库 + CI 流水线</li>
+        <li><b>里程碑 M3</b>：对标 CANoe 的 v3.0 正式发布</li>
+      </ul></div>
+    </div>
+  </div>
+
+  <h3>10.2 测试闭环与工程管理里程碑（插装于 W15-40）</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>时段（周）</th><th>里程碑</th><th>交付物</th><th>验收标准</th></tr></thead>
+      <tbody>
+        <tr><td>W15-18</td><td>用例数据模型 + 表格编辑器 Alpha</td><td>用例库、步骤表格、参数化、YAML 持久化</td><td>100 条用例可编辑/检索/版本回滚</td></tr>
+        <tr><td>W19-22</td><td>图形流程编辑器 + 用例编译器</td><td>流程图画布、公共步骤库、IR 编译</td><td>图形用例与表格双向同步零丢失</td></tr>
+        <tr><td>W23-26</td><td>执行引擎 Test Runner</td><td>调度器、断言库、四态判定、执行监控</td><td>8 通道并发执行、断言精度 &lt;1ms</td></tr>
+        <tr><td>W27-28</td><td>HTML 报告 v1</td><td>统计卡片、失败现场、附件归档</td><td>千级用例报告 &lt;5s 生成</td></tr>
+        <tr><td>W29-32</td><td>多格式导出 + 模板系统</td><td>PDF/Excel/Word、企业模板、双语</td><td>导出版式与 HTML 一致</td></tr>
+        <tr><td>W20-24</td><td>产品中心（MVP）</td><td>产品档案 CRUD、车型矩阵、资源包绑定、基线冻结</td><td>3 产品 × 5 车型矩阵可管理</td></tr>
+        <tr><td>W24-28</td><td>测试结果管理（MVP）</td><td>批次模型、结果回写、归档/对比、趋势指标</td><td>与报告系统数据闭环打通</td></tr>
+        <tr><td>W26-31</td><td>缺陷中心（MVP）</td><td>缺陷 CRUD、状态机、一键建单、看板</td><td>失败→缺陷草稿 10s 内生成</td></tr>
+        <tr><td>W33-36</td><td>趋势/基线/CI 集成</td><td>历史库、基线对比、命令行、质量门禁</td><td>CI 全链路回归报告自动化</td></tr>
+        <tr><td>W37-40</td><td>联动优化 + 发布</td><td>仿真/诊断/脚本/ALM 深度联动、文档、培训</td><td>对标覆盖度 88% → 92%</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>10.3 团队配置（合计 10-15 人）</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>角色</th><th>人数</th><th>主要职责</th></tr></thead>
+      <tbody>
+        <tr><td>FPGA 工程师</td><td>1-2</td><td>FPGA IP（时间戳/过滤/注入/采样/调度）</td></tr>
+        <tr><td>嵌入式工程师</td><td>1-2</td><td>STM32H750 固件、FDCAN/LIN 驱动、USB、DFU</td></tr>
+        <tr><td>硬件工程师</td><td>1-2</td><td>8 通道原理图/PCB、EMC、认证配合</td></tr>
+        <tr><td>C++ 桌面工程师</td><td>3-4</td><td>软件架构、对象模型、仿真引擎、协议栈、UI</td></tr>
+        <tr><td>脚本/工具链工程师</td><td>1-2</td><td>Python DSL、CAPL 兼容层、TFS、诊断栈</td></tr>
+        <tr><td>测试工具开发工程师</td><td>2</td><td>用例编辑器、执行引擎、断言库、报告系统</td></tr>
+        <tr><td>总线测试工程师</td><td>1-2</td><td>用例库建设、公共步骤库、验收、产品/缺陷模块</td></tr>
+        <tr><td>项目经理</td><td>1</td><td>需求、进度、风险、供应链（可兼任）</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ================= 11. 风险与对策 ================= -->
+<div class="section" id="c11">
+  <span class="section-number">11</span><h2>风险与对策</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th style="width:110px">级别</th><th style="width:180px">风险</th><th>对策</th></tr></thead>
+      <tbody>
+        <tr><td><span class="tag tag-red">高</span></td><td>FPGA 开发周期与难度（成败核心）</td><td>最小功能集先行（打戳+过滤）→ 增量迭代；纯 MCU 降级模式兜底；预留国产 FPGA 备选（EG4S20）</td></tr>
+        <tr><td><span class="tag tag-red">高</span></td><td>USB HS 信号完整性 / EMC</td><td>USB3300 参考设计 + 阻抗控制 + 预认证测试；Phase A 设 EMC 预测试关卡</td></tr>
+        <tr><td><span class="tag tag-orange">中</span></td><td>CAPL 兼容层工作量膨胀</td><td>仅对齐高频语义（事件/函数/信号），低频 API 走 Python 原生实现；.can 导入为可选交付</td></tr>
+        <tr><td><span class="tag tag-orange">中</span></td><td>测试管理模块范围蔓延</td><td>MVP 先行（SQLite + 单机），PostgreSQL/多用户为二期；外部 ALM 集成单向导入为主</td></tr>
+        <tr><td><span class="tag tag-orange">中</span></td><td>Python 嵌入性能瓶颈</td><td>热路径 C++ 实现，Python 仅承载业务逻辑；pybind11 零拷贝传帧；脚本线程独立隔离</td></tr>
+        <tr><td><span class="tag tag-orange">中</span></td><td>CAN XL / LIN 一致性测试认证</td><td>先做协议子集，认证委托第三方实验室；文档与测试报告模板化</td></tr>
+        <tr><td><span class="tag tag-blue">低</span></td><td>供应链（FPGA/收发器缺货）</td><td>国产替代选型库（FPGA：EG4S20；收发器：CA-IF1042 等）；双供应商策略</td></tr>
+        <tr><td><span class="tag tag-blue">低</span></td><td>团队技能缺口</td><td>FPGA 人才外聘/培训并行；提供示例工程库降低上手门槛</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ================= 12. 交付物与文档索引 ================= -->
+<div class="section" id="c12">
+  <span class="section-number">12</span><h2>交付物与文档索引</h2>
+
+  <h3>12.1 系统交付物清单</h3>
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-title"><div class="card-icon" style="background:rgba(88,166,255,0.15);color:var(--accent-blue);">H</div>硬件交付物</div>
+      <div class="card-body"><ul>
+        <li>8 通道测试硬件（原理图/PCB/BOM/固件源码）</li>
+        <li>FPGA IP 核（时间戳/过滤/注入/采样/调度）</li>
+        <li>USB 驱动安装包（WinUSB/自定义驱动）</li>
+        <li>CE/FCC 认证报告</li>
+      </ul></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><div class="card-icon" style="background:rgba(57,208,216,0.15);color:var(--accent-teal);">S</div>软件交付物</div>
+      <div class="card-body"><ul>
+        <li>PC 应用（Windows/macOS/Linux）</li>
+        <li>Python SDK + C++ SDK + COM 接口</li>
+        <li>示例工程库（仿真/诊断/测试模板）</li>
+        <li>用户手册 + 开发文档 + API 文档</li>
+      </ul></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><div class="card-icon" style="background:rgba(188,140,255,0.15);color:var(--accent-purple);">T</div>测试工程交付物</div>
+      <div class="card-body"><ul>
+        <li>公共步骤库 + 用例模板库（CAN/LIN/诊断）</li>
+        <li>一致性测试套件（CAN FD / LIN 子集）</li>
+        <li>报告模板（HTML/PDF/Excel/Word，中英双语）</li>
+        <li>CI 集成插件（Jenkins/GitLab）</li>
+      </ul></div>
+    </div>
+  </div>
+
+  <h3>12.2 系列文档索引</h3>
+  <div class="doc-index">
+    <div class="doc-card"><div class="doc-title">① 汽车总线测试工具解决方案（v1.0）</div><div class="doc-desc">基础方案：需求分析、硬件选型（STM32F407）、五层架构、26 周计划</div></div>
+    <div class="doc-card"><div class="doc-title">② 汽车总线测试工具竞品对比分析</div><div class="doc-desc">与 CANoe / PCAN-View / CanKing 的规格、功能、差距量化对比</div></div>
+    <div class="doc-card"><div class="doc-title">③ 对标 CANoe 优化技术方案（v2.0）</div><div class="doc-desc">FPGA+MCU 双核、USB HS、RBS 仿真、CAPL 兼容、诊断栈、40 周计划</div></div>
+    <div class="doc-card"><div class="doc-title">④ 测试管理与报告系统设计方案（v2.1）</div><div class="doc-desc">用例编辑器、用例库、Test Runner、报告系统（对标 vTESTstudio+TFS）</div></div>
+    <div class="doc-card"><div class="doc-title">⑤ 测试产品与缺陷跟踪管理设计方案（v2.2）</div><div class="doc-desc">产品档案/车型矩阵、测试结果管理、BUG 跟踪、一键建单、RESTful API</div></div>
+    <div class="doc-card"><div class="doc-title">⑥ 本集成版（v3.0）</div><div class="doc-desc">全部需求与设计的单一事实来源，统一术语与指标，形成完整技术方案</div></div>
+  </div>
+
+  <div class="note">
+    <strong>版本关系说明：</strong>本集成版（v3.0）为最终交付主文档；①-⑤ 作为分册详档保留，供各专业团队按需查阅。三者版本与指标以本文档为准（如时间戳 v1.0 的 1µs 在 v3.0 统一为 100ns、延迟预算统一为 &lt;1ms）。
+  </div>
+</div>
+
+<div class="foot">汽车总线测试平台技术解决方案 · 集成版 v3.0 · 2026-08-17 · 本文档为六轮需求五份设计文档的单一事实来源</div>
+
+</div>
+</body>
+</html>

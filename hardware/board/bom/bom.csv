@@ -1,0 +1,21 @@
+﻿Ref Designator,Part Number,Description,Value/Package,Qty,Notes
+U1,STM32H750VBT6,Main MCU Cortex-M7 480MHz,LQFP100,1,Main controller
+U2,XC7A35T-1FTG256C,FPGA Artix-7 33K LUT,FTG256,1,FPGA coprocessor (or EG4S20)
+U3,USB3300-INT,USB 2.0 HS ULPI PHY,QFN32,1,USB PHY
+U4,TJA1463AT/0Z,CAN SIC XL transceiver,SOIC14,4,CAN FD/XL 20Mbit/s
+U5,TJA1027T/20,LIN transceiver,SOIC8,2,LIN 20kbps
+U6,ISO1042DW,CAN digital isolator,SOIC16,4,5kVrms per channel
+U7,ISO7742DW,Dual digital isolator,SOIC16,2,Isolation for LIN/sync
+U8,TCXO 10MHz ±10ppm,Clock reference,SMD 3225,1,Timestamp stability
+U9,AMS1117-3.3,LDO 3.3V,SOT223,2,Analog/digital
+U10,MP1584EN,DC-DC 5V input,SOP8,1,Power supply
+U11,W25Q128JVSIQ,SPI NOR Flash 128Mbit,SOIC8,1,DFU OTA staging
+Y1,8MHz,Main MCU crystal,SMD 3225,1,MCU clock
+J1,USB-C Receptacle,USB 2.0 connector,USB-C,1,Host link
+J2,DB9 Male,CAN connector,DB9,4,CAN channel out
+J3,Molex 4pin,LIN connector,2.54mm,2,LIN channel out
+J4,PPS SMA,PPS sync input,SMA,1,Multi-device sync
+D1-D8,TVS ESD,PESD1CAN, SOT23,8,ESD protection on bus lines
+L1-L8,Common mode choke,ACT45B-510-2P, SMD,8,CAN/LIN CM filtering
+C1-C30,MLCC decoupling,0.1uF/10uF 0402/0603,Multiple,Bulk order
+R1-R16,Resistors,0402/0603,Multiple,Bulk order

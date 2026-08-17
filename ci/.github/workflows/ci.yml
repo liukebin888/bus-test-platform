@@ -1,0 +1,59 @@
+name: CI
+
+# 触发：main 分支 push 与任意 PR。
+# 构建语义的唯一入口是 ci/scripts/ci-build.sh（workflow 与本地复现共用）。
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  sw-host:
+    name: PC 端编译 + 单测 (${{ matrix.cc }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        cc: [g++, clang++]
+    steps:
+      - uses: actions/checkout@v4
+      - name: 安装 Ninja（ubuntu-latest 通常已预装，显式确保）
+        run: sudo apt-get update && sudo apt-get install -y ninja-build
+      - name: 构建 + 单测 + CLI 冒烟
+        env:
+          CXX: ${{ matrix.cc }}
+        run: bash ci/scripts/ci-build.sh --only software
+
+  fw-host:
+    name: 固件 host 协议测试 (C11)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: 构建 + 单测
+        run: bash ci/scripts/ci-build.sh --only firmware
+
+  rtl-syntax:
+    name: FPGA RTL 语法检查
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: 安装 iverilog
+        run: sudo apt-get update && sudo apt-get install -y iverilog
+      - name: 语法检查（全量文件编译，逐顶层指定）
+        # top.v 实例化 6 个子模块（timestamp_engine/pps_sync/hw_filter/
+        # error_injector/phys_sampler/tx_scheduler），必须一次性编译全部源文件，
+        # 不能单文件编译，否则报 Unknown module type。
+        run: |
+          cd hardware/fpga/src
+          for m in top hw_filter error_injector phys_sampler \
+                   tx_scheduler pps_sync timestamp_engine; do
+            echo "==> top-level: $m"
+            iverilog -g2012 -s "$m" -o /dev/null *.v
+          done
+
+  docs:
+    name: 文档一致性（占位）
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo "Phase B: 文档链接/需求追溯检查"
